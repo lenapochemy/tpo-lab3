@@ -12,15 +12,6 @@ public class UserPage extends Page{
     private final By follow = By.xpath("//div[@class='mhy-follow-btn']//div[@role='button']//span");
     private final By askNews = By.xpath("//button[span]");
     private final By newsInfo = By.xpath("//button//span");
-//    private final By avatar = By.xpath("//div[@class='header-avatar']");
-//    private final By logout = By.xpath("//ul//li//div[span[contains(text(), 'Выйти')]]");
-//    private final By confirmLogout = By.xpath("//footer//button[span[contains(text(), 'Выйти')]]");
-//
-
-
-
-
-
 
     public UserPage(WebDriver driver) {
         super(driver);

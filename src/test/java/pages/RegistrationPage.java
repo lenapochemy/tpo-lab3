@@ -22,7 +22,9 @@ public class RegistrationPage extends Page{
 
 
     private final By userAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large cmn-checkbox text-left mr-p12 mb-p8 agreement_privacyAndUser']");
+//    private final By userAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large cmn-checkbox text-left mr-p12 mb-p8 agreement_privacyAndUser']//span[@class='el-checkbox__input']");
     private final By checkedUserAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large is-checked cmn-checkbox text-left mr-p12 mb-p8 agreement_privacyAndUser']");
+//    private final By checkedUserAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large is-checked cmn-checkbox text-left mr-p12 mb-p8 agreement_privacyAndUser']//span[@class='el-checkbox__input is-checked']");
     private final By marketingAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large cmn-checkbox text-left mr-p12 mb-p8 agreement_marketing']");
     private final By checkedMarketingAgreement = By.xpath("//label[@class='el-checkbox el-checkbox--large is-checked cmn-checkbox text-left mr-p12 mb-p8 agreement_marketing']");
 

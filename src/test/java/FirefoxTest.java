@@ -33,29 +33,19 @@ public class FirefoxTest {
     }
 
     @Test
-    public void loginTest(){
-        HoyoTest.loginTest(driver);
+    public void loginTest() throws InterruptedException{
+        HoyoTest.loginTest(driver, "pochemylena@mail.ru");
     }
 
     @Test
     public void registrationTest() throws InterruptedException{
         HoyoTest.registrationTest(driver, "redmimimirise@mail.ru");
-//        HoyoTest.deleteAccount(driver);
-    }
-
-    @Test
-    public void labLoginTest() throws InterruptedException{
-        HoyoTest.labLogin(driver);
-    }
-
-    @Test
-    public void labRegistrationTest() throws InterruptedException{
-        HoyoTest.labReg(driver, "redmimimire");
     }
 
     @Test
     public void labTest() throws InterruptedException{
-        HoyoTest.toLab(driver);
+        HoyoTest.toLab(driver, "pochemypochemylena@mail.ru", "pochemypochemy",
+                "pochemypochlena@mail.ru", "pochlena", "462966484");
     }
 
 

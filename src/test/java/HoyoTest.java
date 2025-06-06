@@ -1,12 +1,5 @@
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
 import pages.*;
-
-import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,17 +11,17 @@ public class HoyoTest {
         assertEquals("Главная | Официальный сайт Honkai: Star Rail | Пусть это путешествие приведёт нас к звёздам", homePage.getTitle());
     }
 
-    public static void loginTest(WebDriver driver) {
+    public static void loginTest(WebDriver driver, String email) throws InterruptedException {
         HomePage homePage = HomePage.init(driver);
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
 
-        login(loginPage);
+        login(loginPage, email);
         driver.switchTo().defaultContent();
         assertTrue(homePage.isLogin());
     }
 
-    private static void login(LoginPage loginPage){
+    private static void login(LoginPage loginPage, String userEmail) throws InterruptedException {
         assertTrue(loginPage.isDisabledSubmitButton());
 
 
@@ -40,12 +33,14 @@ public class HoyoTest {
         assertTrue(loginPage.isLoginError());
         assertTrue(loginPage.isDisabledSubmitButton());
 
-        loginPage.printLogin("redmimimirise@mail.ru");
+        loginPage.printLogin(userEmail);
         loginPage.clickPassword();
-//        assertFalse(loginPage.isLoginError(driver));
+        Thread.sleep(2000);
+        assertFalse(loginPage.isLoginError());
         assertTrue(loginPage.isPasswordError());
         assertTrue(loginPage.isDisabledSubmitButton());
-//        assertFalse(loginPage.isLoginError(driver));
+        Thread.sleep(2000);
+        assertFalse(loginPage.isLoginError());
 
         loginPage.clickPassword();
         loginPage.clickLogin();
@@ -57,7 +52,8 @@ public class HoyoTest {
 
         loginPage.printPassword("qwerty1234");
         loginPage.clickLogin();
-//        assertFalse(loginPage.isPasswordError(driver));
+        Thread.sleep(2000);
+        assertFalse(loginPage.isPasswordError());
         assertFalse(loginPage.isDisabledSubmitButton());
 
         loginPage.clickSubmitButton();
@@ -65,7 +61,7 @@ public class HoyoTest {
     }
 
 
-    private static void justLogin(LoginPage loginPage, String email){
+    private static void justLogin(LoginPage loginPage, String email) {
         loginPage.printLogin(email);
         loginPage.printPassword("qwerty1234");
         assertFalse(loginPage.isDisabledSubmitButton());
@@ -74,7 +70,7 @@ public class HoyoTest {
     }
 
 
-    public static void registrationTest(WebDriver driver, String email) throws InterruptedException{
+    public static void registrationTest(WebDriver driver, String email) throws InterruptedException {
         HomePage homePage = HomePage.init(driver);
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
@@ -107,13 +103,6 @@ public class HoyoTest {
         Thread.sleep(1000);
         assertTrue(registrationPage.isEmailError());
         assertEquals("Неверный формат электронной почты", registrationPage.getEmailError());
-
-
-//        assertFalse(registrationPage.isEmailForCodeError());
-//        registrationPage.clickCodeSendButton();
-//        assertTrue(registrationPage.isEmailForCodeError());
-////wait
-//        assertFalse(registrationPage.isEmailForCodeError());
 
         registrationPage.writeEmail(email);
         registrationPage.clickCodeInput();
@@ -186,10 +175,15 @@ public class HoyoTest {
         assertFalse(registrationPage.isPasswordAgainError());
 
         assertFalse(registrationPage.isCheckedUserAgreement());
+        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
+        Thread.sleep(3000);
         assertTrue(registrationPage.isCheckedUserAgreement());
+        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
+        Thread.sleep(3000);
         assertFalse(registrationPage.isCheckedUserAgreement());
+        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
 
         assertFalse(registrationPage.isCheckedMarketingAgreement());
@@ -201,224 +195,208 @@ public class HoyoTest {
         registrationPage.waitForCode();
         registrationPage.clickSubmit();
 
-
     }
 
-    public static void toLab(WebDriver driver) throws InterruptedException{
-//        HomePage homePage = HomePage.init(driver);
-//        LabPage labPage = homePage.goToLabPage();
-//        LoginPage loginPage = labPage.goToLoginPage();
-//
-//        login(loginPage);
 
-        LabPage labPage = LabPage.init(driver);
-
-        assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
-        assertFalse(labPage.isLogin());
-
-        LoginPage loginPage = labPage.goToLoginPage();
-
-        login(loginPage);
-
-        driver.switchTo().defaultContent();
-        Thread.sleep(3000);
-        assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
-
-
-        assertTrue(labPage.isLogin());
-
-        labPage.skipInterestDialog();
-        assertTrue(labPage.isExistInterestDialog());
-
-        //follow unfollow
-
+    private static void postTest(LabPage labPage) throws InterruptedException {
         String articleTitle = labPage.getFirstNewTitle();
-        labPage.readNew();
+        ArticlePage articlePage = labPage.readNew();
         Thread.sleep(3000);
-        assertEquals(articleTitle, labPage.getArticleTitle());
+        assertEquals(articleTitle, articlePage.getArticleTitle());
 
-        assertFalse(labPage.isFollow());
+        assertFalse(articlePage.isFollow());
 
-        labPage.clickFollowButton();
-//        labPage.skipAvatarDialog();
+        articlePage.clickFollowButton();
         Thread.sleep(1000);
-        assertTrue(labPage.isFollow());
-        labPage.clickUnFollow();
+        assertTrue(articlePage.isFollow());
+        articlePage.clickUnFollow();
         Thread.sleep(1000);
-        assertFalse(labPage.isFollow());
+        assertFalse(articlePage.isFollow());
 
 
-        Integer reactionCount = labPage.getReactionCount();
+        Integer reactionCount = articlePage.getReactionCount();
 
-        labPage.clickReaction();
+        articlePage.clickReaction();
         Thread.sleep(1000);
-        assertEquals(reactionCount + 1, labPage.getReactionCount());
-        labPage.clickReaction();
+        assertEquals(reactionCount + 1, articlePage.getReactionCount());
+        articlePage.clickReaction();
         Thread.sleep(1000);
-        assertEquals(reactionCount, labPage.getReactionCount());
+        assertEquals(reactionCount, articlePage.getReactionCount());
 
         String comment = "Классно!";
-        if(labPage.isFirstCommentHasText()){
-            assertNotEquals(comment, labPage.getFirstCommentText());
+        if (articlePage.isFirstCommentHasText()) {
+            assertNotEquals(comment, articlePage.getFirstCommentText());
         }
-        labPage.writeComment(comment);
-        labPage.clickSendComment();
+        articlePage.writeComment(comment);
+        articlePage.clickSendComment();
         Thread.sleep(3000);
-        assertEquals(comment, labPage.getFirstCommentText());
+        assertEquals(comment, articlePage.getFirstCommentText());
 
-//        labPage.clickThreeDots();
-        labPage.clickDeleteComment();
+        articlePage.clickDeleteComment();
         Thread.sleep(3000);
-        if(labPage.isFirstCommentHasText()){
-            assertNotEquals(comment, labPage.getFirstCommentText());
+        if (articlePage.isFirstCommentHasText()) {
+            assertNotEquals(comment, articlePage.getFirstCommentText());
         }
-
-
-        //post
-
-        labPage.clickPostCreateButton();
-        labPage.clickTextPostCreate();
-        labPage.writePostTitle("Классно");
-        labPage.writePost("Очень классно");
-
-        assertEquals("Группа", labPage.getGroupName());
-        labPage.chooseGroup();
-        Thread.sleep(3000);
-        assertEquals("Genshin Impact", labPage.getGroupName());
-        
-        assertEquals("С правильной категорией получите больше просмотров!", labPage.getCategoryName());
-        labPage.chooseCategory();
-        Thread.sleep(3000);
-        assertEquals("Обсуждения", labPage.getCategoryName());
-
-
-        assertFalse(labPage.isOriginalWork());
-        labPage.clickOriginalWork();
-        assertTrue(labPage.isOriginalWork());
-        labPage.clickOriginalWork();
-        assertFalse(labPage.isOriginalWork());
-        labPage.clickOriginalWork();
-        assertTrue(labPage.isOriginalWork());
-
-
-        assertTrue(labPage.isRepostRight());
-        labPage.clickReportRight();
-        assertFalse(labPage.isRepostRight());
-        labPage.clickReportRight();
-        assertTrue(labPage.isRepostRight());
-        labPage.clickReportRight();
-        assertFalse(labPage.isRepostRight());
-
-        labPage.clickPostSend();
-
-        Thread.sleep(3000);
-
-        assertEquals("Классно", labPage.getMyPostTitle());
-
-        assertEquals("Очень классно", labPage.getMyPost());
-
-        labPage.clickDeletePost();
-
-        Thread.sleep(5000);
-
-        assertEquals(0, labPage.getMyPostsCount());
-
-
-        String name = "redmimimi";
-        labPage.search(name);
-        assertEquals(name, labPage.getFirstResultName());
-
-        UserPage userPage = labPage.toFirstResultPage();
-        assertEquals(name, userPage.getUserNickname());
-
-
-        assertFalse(userPage.isFollow());
-        userPage.clickFollowButton();
-        assertTrue(userPage.isFollow());
-
-        assertFalse(userPage.isAskingNews());
-        userPage.clickAskNewsButton();
-        assertTrue(userPage.isAskingNews());
-
-        userPage.backToLabPage();
-
-        assertTrue(labPage.isLogin());
-        labPage.logout();
-        Thread.sleep(3000);
-        assertFalse(labPage.isLogin());
-
-        LoginPage secondLoginPage = labPage.goToLoginPage();
-        justLogin(secondLoginPage, "redmimimirise@mail.ru");
-
-
-
 
     }
 
-    public static void labLogin(WebDriver driver) throws InterruptedException{
-//        HomePage homePage = HomePage.init(driver);
-//        assertFalse(homePage.isLogin());
-//        LabPage labPage = homePage.goToLabPage();
-        LabPage labPage = LabPage.init(driver);
-
-        assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
-        assertFalse(labPage.isLogin());
-
-        LoginPage loginPage = labPage.goToLoginPage();
-
-        login(loginPage);
-
-        driver.switchTo().defaultContent();
-        Thread.sleep(3000);
-        assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
-        assertTrue(labPage.isLogin());
-
-        labPage.skipInterestDialog();
-        assertTrue(labPage.isExistInterestDialog());
-
-//        assertTrue(homePage.isLogin());
-    }
-
-    public static void labReg(WebDriver driver, String email) throws InterruptedException{
+    public static void toLab(WebDriver driver, String userEmail, String username, String secondUserEmail,
+                             String secondUserName, String secondUserId) throws InterruptedException {
         HomePage homePage = HomePage.init(driver);
         LabPage labPage = homePage.goToLabPage();
 
         assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
         assertFalse(labPage.isLogin());
 
-        RegistrationPage registrationPage = labPage.goToRegPage();
+        LoginPage loginPage = labPage.goToLoginPage();
 
-        registration(email, registrationPage);
+        login(loginPage, userEmail);
 
         driver.switchTo().defaultContent();
+        Thread.sleep(3000);
         assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
         assertTrue(labPage.isLogin());
+
+        labPage.skipInterestDialog();
+        assertTrue(labPage.isExistInterestDialog());
+
+        //подписка отписка реакции комментарии
+        postTest(labPage);
+
+        //новый пост и удаление
+        newPostTest(labPage);
+
+
+        // подписка на другого пользователя и запрос новинок
+
+        UserPage userPage = labPage.toUserPage(secondUserId);
+        assertEquals(secondUserName, userPage.getUserNickname());
+
+        assertFalse(userPage.isFollow());
+        userPage.clickFollowButton();
+        Thread.sleep(2000);
+        assertTrue(userPage.isFollow());
+
+        userPage.clickAskNewsButton();
+        Thread.sleep(2000);
+        assertTrue(userPage.isAskingNews());
+
+        // выход
+        assertTrue(labPage.isLogin());
+        logout(labPage);
+
+        assertFalse(labPage.isLogin());
+
+        notificationTest(driver, labPage, secondUserEmail, secondUserName, userEmail, username);
+
+    }
+
+    private static void newPostTest(LabPage labPage) throws InterruptedException {
+        NewArticlePage articlePage = labPage.writeNewPost();
+
+        articlePage.writePostTitle("Классно");
+        articlePage.writePost("Очень классно");
+
+        assertEquals("Группа", articlePage.getGroupName());
+        articlePage.chooseGroup();
+        Thread.sleep(3000);
+        assertEquals("Genshin Impact", articlePage.getGroupName());
+
+        assertEquals("С правильной категорией получите больше просмотров!", articlePage.getCategoryName());
+        articlePage.chooseCategory();
+        Thread.sleep(3000);
+        assertEquals("Обсуждения", articlePage.getCategoryName());
+
+
+        assertFalse(articlePage.isOriginalWork());
+        articlePage.clickOriginalWork();
+        assertTrue(articlePage.isOriginalWork());
+        articlePage.clickOriginalWork();
+        assertFalse(articlePage.isOriginalWork());
+        articlePage.clickOriginalWork();
+        assertTrue(articlePage.isOriginalWork());
+
+        assertTrue(articlePage.isRepostRight());
+        articlePage.clickReportRight();
+        assertFalse(articlePage.isRepostRight());
+        articlePage.clickReportRight();
+        assertTrue(articlePage.isRepostRight());
+        articlePage.clickReportRight();
+        assertFalse(articlePage.isRepostRight());
+
+        articlePage.clickPostSend();
+
+        Thread.sleep(3000);
+
+        assertEquals("Классно", articlePage.getMyPostTitle());
+
+        assertEquals("Очень классно", articlePage.getMyPost());
+
+        articlePage.clickDeletePost();
+
+        Thread.sleep(5000);
+
+        assertFalse(labPage.isExistsJustNowPost());
+
+    }
+
+    private static void logout(LabPage labPage) throws InterruptedException {
+        labPage.logout();
+        Thread.sleep(5000);
+    }
+
+    private static void notificationTest(WebDriver driver, LabPage labPage, String secondUserEmail, String secondUsername, String firstUserEmail, String firstUserName) throws InterruptedException {
+        assertFalse(labPage.isLogin());
+        LoginPage loginPage = labPage.goToLoginPage();
+        justLogin(loginPage, secondUserEmail);
+
+        driver.switchTo().defaultContent();
+        Thread.sleep(10000);
+        assertTrue(labPage.isLogin());
+
+        Thread.sleep(3000);
+
+        labPage.clickFollowNotifications();
+        assertTrue(labPage.checkFollowNotification(firstUserName));
+
+        writePost(labPage);
+
+        assertTrue(labPage.isLogin());
+        logout(labPage);
+        assertFalse(labPage.isLogin());
+
+        LoginPage secondLoginPage = labPage.goToLoginPage();
+        justLogin(secondLoginPage, firstUserEmail);
+        driver.switchTo().defaultContent();
+        Thread.sleep(10000);
+        assertTrue(labPage.isLogin());
+
+        labPage.clickSystemNotifications();
+        assertTrue(labPage.checkNewPostNotification(secondUsername));
+
     }
 
 
+    private static void writePost(LabPage labPage) throws InterruptedException {
+        NewArticlePage articlePage = labPage.writeNewPost();
 
+        articlePage.writePostTitle("Классно");
+        articlePage.writePost("Очень классно");
 
-    public static void deleteAccount(WebDriver driver) throws InterruptedException{
-        HomePage homePage = HomePage.init(driver);
-        AccountPage accountPage = homePage.goToAccountPage();
-        accountPage.deleteAccount();
+        articlePage.chooseGroup();
+        Thread.sleep(2000);
+        articlePage.chooseCategory();
+
+        articlePage.clickOriginalWork();
+        Thread.sleep(2000);
+        articlePage.clickReportRight();
+
+        articlePage.clickPostSend();
+
+        Thread.sleep(3000);
+
+        assertEquals("Классно", articlePage.getMyPostTitle());
+        assertEquals("Очень классно", articlePage.getMyPost());
     }
-
-//    public static void deleteAccount(WebDriver driver) throws InterruptedException{
-//        HomePage homePage = HomePage.init(driver);
-//        AccountPage accountPage = homePage.goToAccountPage();
-//
-//        accountPage.clickManageButton();
-//        accountPage.clickDeleteButton();
-//
-//        driver.switchTo().frame("hyv-account-frame");
-//
-//        accountPage.clickSendCodeButton();
-//
-//        Thread.sleep(30000);
-//        accountPage.clickSubmit();
-//
-//    }
-
 
 }

@@ -14,9 +14,6 @@ public class ChromeTest  {
     @BeforeEach
     public void init() {
         ChromeOptions chromeOptions = new ChromeOptions();
-        //        options.addArguments("--disable-blink-features=AutomationControlled");
-//        options.setExperimentalOption("excludeSwitches", Arrays.asList("enable-automation"));
-//        options.setExperimentalOption("useAutomationExtension", false);
         chromeOptions.setImplicitWaitTimeout(Duration.ofSeconds(50));
         driver = new ChromeDriver(chromeOptions);
     }
@@ -32,29 +29,19 @@ public class ChromeTest  {
     }
 
     @Test
-    public void loginTest(){
-        HoyoTest.loginTest(driver);
+    public void loginTest() throws InterruptedException{
+        HoyoTest.loginTest(driver, "pochemylena@mail.ru");
     }
 
     @Test
     public void registrationTest() throws InterruptedException{
-        HoyoTest.registrationTest(driver, "redredredmirise@mail.ru");
-//        HoyoTest.deleteAccount(driver);
+        HoyoTest.registrationTest(driver, "pochpochlena@mail.ru");
     }
-
-    @Test
-    public void labLoginTest() throws InterruptedException{
-        HoyoTest.labLogin(driver);
-    }
-
-//    @Test
-//    public void labRegistrationTest() throws InterruptedException{
-//        HoyoTest.labReg(driver, "redmimimire");
-//    }
 
     @Test
     public void labTest() throws InterruptedException{
-        HoyoTest.toLab(driver);
+        HoyoTest.toLab(driver, "367519@niuitmo.ru", "user_57c90fub0c",
+                "367519@edu.itmo.ru", "red367", "463043807");
     }
 }
 
