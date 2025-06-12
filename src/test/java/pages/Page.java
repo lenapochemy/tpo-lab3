@@ -58,32 +58,4 @@ public abstract class Page {
         driver.manage().timeouts().implicitlyWait(timeout);
         return result;
     }
-
-    protected void moveToNewTab(String originalTab) {
-        Set<String> allTabs = driver.getWindowHandles();
-
-        for (String tab : allTabs) {
-            if (!tab.equals(originalTab)) {
-                driver.close();
-                driver.switchTo().window(tab);
-                break;
-            }
-        }
-
-    }
-
-    protected boolean newTabOpened(String originalTab) {
-        Set<String> allTabs = driver.getWindowHandles();
-        for (String tab : allTabs) {
-            if (!tab.equals(originalTab)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    public void refresh() {
-        driver.navigate().refresh();
-    }
 }

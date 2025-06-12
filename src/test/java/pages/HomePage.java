@@ -41,7 +41,6 @@ public class HomePage extends Page {
         WebElement element = driver.findElement(hoyolabButton);
         String link = element.getAttribute("href");
         driver.get(link);
-//        driver.navigate().to(link);
         return new LabPage(driver);
     }
 }

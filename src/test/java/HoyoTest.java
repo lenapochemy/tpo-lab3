@@ -8,22 +8,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HoyoTest {
 
 
-    public static void titleTest(WebDriver driver) {
-        HomePage homePage = HomePage.init(driver);
+    public static void titleTest(HomePage homePage) {
         assertEquals("Главная | Официальный сайт Honkai: Star Rail | Пусть это путешествие приведёт нас к звёздам", homePage.getTitle());
     }
 
-    public static void loginTest(WebDriver driver, String email){
-        HomePage homePage = HomePage.init(driver);
+    public static void loginTest(WebDriver driver, HomePage homePage, String email,  String password){
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
 
-        login(loginPage, email);
+        login(loginPage, email, password);
         driver.switchTo().defaultContent();
         assertTrue(homePage.isLogin());
     }
 
-    private static void login(LoginPage loginPage, String userEmail) {
+    private static void login(LoginPage loginPage, String userEmail, String password) {
         assertTrue(loginPage.isDisabledSubmitButton());
         loginPage.clickLogin();
         loginPage.clickPassword();
@@ -47,7 +45,7 @@ public class HoyoTest {
         assertTrue(loginPage.isPasswordError());
         assertTrue(loginPage.isDisabledSubmitButton());
 
-        loginPage.printPassword("qwerty1234");
+        loginPage.printPassword(password);
         loginPage.clickLogin();
         assertTrue(loginPage.notPasswordError());
         assertFalse(loginPage.isDisabledSubmitButton());
@@ -56,27 +54,26 @@ public class HoyoTest {
     }
 
 
-    private static void justLogin(LoginPage loginPage, String email) {
+    private static void justLogin(LoginPage loginPage, String email, String password) {
         loginPage.printLogin(email);
-        loginPage.printPassword("qwerty1234");
+        loginPage.printPassword(password);
         assertFalse(loginPage.isDisabledSubmitButton());
 
         loginPage.clickSubmitButton();
     }
 
 
-    public static void registrationTest(WebDriver driver, String email)  {
-        HomePage homePage = HomePage.init(driver);
+    public static void registrationTest(WebDriver driver, HomePage homePage, String email, String password)  {
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
         RegistrationPage registrationPage = loginPage.goToRegistrationPage();
 
-        registration(email, registrationPage);
+        registration(email, password, registrationPage);
         driver.switchTo().defaultContent();
         assertTrue(homePage.isLogin());
     }
 
-    private static void registration(String email, RegistrationPage registrationPage) {
+    private static void registration(String email, String password, RegistrationPage registrationPage) {
         assertTrue(registrationPage.isSubmitDisabled());
 
         registrationPage.clickEmailInout();
@@ -129,7 +126,7 @@ public class HoyoTest {
         assertTrue(registrationPage.isPasswordError());
         assertTrue(registrationPage.isPasswordErrorEquals("Не менее 2 типов символов"));
 
-        registrationPage.writePassword("qwerty1234");
+        registrationPage.writePassword(password);
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
         assertFalse(registrationPage.isPasswordError());
@@ -153,7 +150,7 @@ public class HoyoTest {
         assertTrue(registrationPage.isPasswordAgainError());
         assertTrue(registrationPage.isPasswordAgainErrorEquals("Пароли должны совпадать"));
 
-        registrationPage.writePasswordAgain("qwerty1234");
+        registrationPage.writePasswordAgain(password);
         registrationPage.clickCodeInput();
         assertFalse(registrationPage.isSubmitDisabled());
         assertFalse(registrationPage.isPasswordAgainError());
@@ -211,18 +208,16 @@ public class HoyoTest {
 
     }
 
-    public static void labTest(WebDriver driver, String userEmail, String username, String secondUserEmail,
-                               String secondUserName, String secondUserId){
-        HomePage homePage = HomePage.init(driver);
+    public static void labTest(WebDriver driver, HomePage homePage, String userEmail, String username, String secondUserEmail,
+                               String secondUserName, String secondUserId, String password){
         LabPage labPage = homePage.goToLabPage();
 
         assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
         assertFalse(labPage.isLogin());
-        System.out.println("login is false");
 
         LoginPage loginPage = labPage.goToLoginPage();
 
-        login(loginPage, userEmail);
+        login(loginPage, userEmail, password);
 
         Duration timeout = loginPage.implicitTo0();
         driver.switchTo().defaultContent();
@@ -255,7 +250,7 @@ public class HoyoTest {
         logout(labPage);
         assertFalse(labPage.isLogin());
 
-        notificationTest(driver, labPage, secondUserEmail, secondUserName, userEmail, username);
+        notificationTest(driver, labPage, secondUserEmail, secondUserName, userEmail, username, password);
 
     }
 
@@ -306,10 +301,10 @@ public class HoyoTest {
     }
 
     private static void notificationTest(WebDriver driver, LabPage labPage, String secondUserEmail,
-                                         String secondUsername, String firstUserEmail, String firstUserName) {
+                                         String secondUsername, String firstUserEmail, String firstUserName, String password) {
         assertFalse(labPage.isLogin());
         LoginPage loginPage = labPage.goToLoginPage();
-        justLogin(loginPage, secondUserEmail);
+        justLogin(loginPage, secondUserEmail, password);
 
         driver.switchTo().defaultContent();
         assertTrue(labPage.isLogin());
@@ -324,7 +319,7 @@ public class HoyoTest {
         assertFalse(labPage.isLogin());
 
         LoginPage secondLoginPage = labPage.goToLoginPage();
-        justLogin(secondLoginPage, firstUserEmail);
+        justLogin(secondLoginPage, firstUserEmail, password);
         driver.switchTo().defaultContent();
         assertTrue(labPage.isLogin());
 

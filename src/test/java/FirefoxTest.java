@@ -1,51 +1,49 @@
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import pages.HomePage;
 
 import java.time.Duration;
 
 public class FirefoxTest {
 
-    WebDriver driver;
+    static WebDriver driver;
+    static HomePage homePage;
 
-    @BeforeEach
-    public void init() {
+    @BeforeAll
+    public static void init() {
         FirefoxOptions options = new FirefoxOptions();
         options.setImplicitWaitTimeout(Duration.ofSeconds(1000));
         driver = new FirefoxDriver(options);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(1000));
+        homePage = HomePage.init(driver);
     }
 
-    @AfterEach
-    public void destroy() {
+    @AfterAll
+    public static void destroy() {
         driver.quit();
     }
 
     @Test
     public void titleTest() {
-        HoyoTest.titleTest(driver);
+        HoyoTest.titleTest(homePage);
     }
 
     @Test
     public void loginTest() {
-        HoyoTest.loginTest(driver, Config.EMAIL);
+        HoyoTest.loginTest(driver, homePage, Config.EMAIL, Config.PASSWORD);
     }
 
-    @Disabled
     @Test
-    public void registrationTest(){
-            HoyoTest.registrationTest(driver, Config.EMAIL);
+    public void registrationTest() {
+        HoyoTest.registrationTest(driver, homePage, Config.EMAIL, Config.PASSWORD);
     }
 
-    @Disabled
     @Test
     public void labTest()  {
-        HoyoTest.labTest(driver, Config.EMAIL, Config.USERNAME, Config.SECOND_EMAIL, Config.SECOND_USERNAME, Config.SECOND_ID);
+        HoyoTest.labTest(driver, homePage, Config.EMAIL, Config.USERNAME, Config.SECOND_EMAIL, Config.SECOND_USERNAME,
+                Config.SECOND_ID, Config.PASSWORD);
     }
-
 
 }
