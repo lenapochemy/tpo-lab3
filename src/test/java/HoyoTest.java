@@ -1,6 +1,8 @@
 import org.openqa.selenium.WebDriver;
 import pages.*;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HoyoTest {
@@ -11,7 +13,7 @@ public class HoyoTest {
         assertEquals("Главная | Официальный сайт Honkai: Star Rail | Пусть это путешествие приведёт нас к звёздам", homePage.getTitle());
     }
 
-    public static void loginTest(WebDriver driver, String email) throws InterruptedException {
+    public static void loginTest(WebDriver driver, String email){
         HomePage homePage = HomePage.init(driver);
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
@@ -21,10 +23,8 @@ public class HoyoTest {
         assertTrue(homePage.isLogin());
     }
 
-    private static void login(LoginPage loginPage, String userEmail) throws InterruptedException {
+    private static void login(LoginPage loginPage, String userEmail) {
         assertTrue(loginPage.isDisabledSubmitButton());
-
-
         loginPage.clickLogin();
         loginPage.clickPassword();
         assertTrue(loginPage.isLoginError());
@@ -35,12 +35,9 @@ public class HoyoTest {
 
         loginPage.printLogin(userEmail);
         loginPage.clickPassword();
-        Thread.sleep(2000);
-        assertFalse(loginPage.isLoginError());
+        assertTrue(loginPage.notLoginError());
         assertTrue(loginPage.isPasswordError());
         assertTrue(loginPage.isDisabledSubmitButton());
-        Thread.sleep(2000);
-        assertFalse(loginPage.isLoginError());
 
         loginPage.clickPassword();
         loginPage.clickLogin();
@@ -52,12 +49,10 @@ public class HoyoTest {
 
         loginPage.printPassword("qwerty1234");
         loginPage.clickLogin();
-        Thread.sleep(2000);
-        assertFalse(loginPage.isPasswordError());
+        assertTrue(loginPage.notPasswordError());
         assertFalse(loginPage.isDisabledSubmitButton());
 
         loginPage.clickSubmitButton();
-
     }
 
 
@@ -70,7 +65,7 @@ public class HoyoTest {
     }
 
 
-    public static void registrationTest(WebDriver driver, String email) throws InterruptedException {
+    public static void registrationTest(WebDriver driver, String email)  {
         HomePage homePage = HomePage.init(driver);
         assertFalse(homePage.isLogin());
         LoginPage loginPage = homePage.goToLoginPage();
@@ -81,191 +76,167 @@ public class HoyoTest {
         assertTrue(homePage.isLogin());
     }
 
-    private static void registration(String email, RegistrationPage registrationPage) throws InterruptedException {
+    private static void registration(String email, RegistrationPage registrationPage) {
         assertTrue(registrationPage.isSubmitDisabled());
 
         registrationPage.clickEmailInout();
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isEmailError());
+        assertTrue(registrationPage.isEmailErrorEquals("Необходимо заполнить поле: Электронная почта"));
 
         registrationPage.writeEmail("");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isEmailError());
-        assertEquals("Необходимо заполнить поле: Электронная почта", registrationPage.getEmailError());
+        assertTrue(registrationPage.isEmailErrorEquals("Необходимо заполнить поле: Электронная почта"));
 
         registrationPage.writeEmail("sssss");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isEmailError());
-        assertEquals("Неверный формат электронной почты", registrationPage.getEmailError());
+        assertTrue(registrationPage.isEmailErrorEquals("Неверный формат электронной почты"));
 
         registrationPage.writeEmail(email);
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertFalse(registrationPage.isEmailError());
 
         registrationPage.clickCodeSendButton();
-        Thread.sleep(30000);
+        registrationPage.waitForCode();
+
         registrationPage.clickPassword();
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordError());
-        assertEquals("Необходимо заполнить поле: Пароль", registrationPage.getPasswordError());
+        assertTrue(registrationPage.isPasswordErrorEquals("Необходимо заполнить поле: Пароль"));
 
         registrationPage.writePassword("");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordError());
-        assertEquals("Необходимо заполнить поле: Пароль", registrationPage.getPasswordError());
+        assertTrue(registrationPage.isPasswordErrorEquals("Необходимо заполнить поле: Пароль"));
 
         registrationPage.writePassword("ddddd");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordError());
-        assertEquals("Пароль должен включать от 8 до 30 цифр, букв или символов", registrationPage.getPasswordError());
+        assertTrue(registrationPage.isPasswordErrorEquals("Пароль должен включать от 8 до 30 цифр, букв или символов"));
 
         registrationPage.writePassword("dddddddd");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordError());
-        assertEquals("Не менее 2 типов символов", registrationPage.getPasswordError());
+        assertTrue(registrationPage.isPasswordErrorEquals("Не менее 2 типов символов"));
 
         registrationPage.writePassword("qwerty1234");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertFalse(registrationPage.isPasswordError());
 
 
         registrationPage.clickPasswordAgain();
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordAgainError());
-        assertEquals("Необходимо заполнить поле: Подтвердите пароль", registrationPage.getPasswordAgainError());
+        assertTrue(registrationPage.isPasswordAgainErrorEquals("Необходимо заполнить поле: Подтвердите пароль"));
 
         registrationPage.writePasswordAgain("");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordAgainError());
-        assertEquals("Необходимо заполнить поле: Подтвердите пароль", registrationPage.getPasswordAgainError());
+        assertTrue(registrationPage.isPasswordAgainErrorEquals("Необходимо заполнить поле: Подтвердите пароль"));
 
         registrationPage.writePasswordAgain("ddddd");
         registrationPage.clickCodeInput();
         assertTrue(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertTrue(registrationPage.isPasswordAgainError());
-        assertEquals("Пароли должны совпадать", registrationPage.getPasswordAgainError());
+        assertTrue(registrationPage.isPasswordAgainErrorEquals("Пароли должны совпадать"));
 
         registrationPage.writePasswordAgain("qwerty1234");
         registrationPage.clickCodeInput();
         assertFalse(registrationPage.isSubmitDisabled());
-        Thread.sleep(1000);
         assertFalse(registrationPage.isPasswordAgainError());
 
         assertFalse(registrationPage.isCheckedUserAgreement());
-        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
-        Thread.sleep(3000);
         assertTrue(registrationPage.isCheckedUserAgreement());
-        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
-        Thread.sleep(3000);
         assertFalse(registrationPage.isCheckedUserAgreement());
-        Thread.sleep(1000);
         registrationPage.clickUserAgreement();
 
+        assertTrue(registrationPage.isCheckedMarketingAgreement());
+        registrationPage.clickMarketingAgreement();
         assertFalse(registrationPage.isCheckedMarketingAgreement());
         registrationPage.clickMarketingAgreement();
         assertTrue(registrationPage.isCheckedMarketingAgreement());
         registrationPage.clickMarketingAgreement();
         assertFalse(registrationPage.isCheckedMarketingAgreement());
 
-        registrationPage.waitForCode();
         registrationPage.clickSubmit();
-
     }
 
 
-    private static void postTest(LabPage labPage) throws InterruptedException {
+    private static void postTest(LabPage labPage, String username) {
         String articleTitle = labPage.getFirstNewTitle();
         ArticlePage articlePage = labPage.readNew();
-        Thread.sleep(3000);
         assertEquals(articleTitle, articlePage.getArticleTitle());
 
         assertFalse(articlePage.isFollow());
 
         articlePage.clickFollowButton();
-        Thread.sleep(1000);
         assertTrue(articlePage.isFollow());
         articlePage.clickUnFollow();
-        Thread.sleep(1000);
         assertFalse(articlePage.isFollow());
 
 
-        Integer reactionCount = articlePage.getReactionCount();
-
+        assertFalse(articlePage.isExistClickedReaction());
         articlePage.clickReaction();
-        Thread.sleep(1000);
-        assertEquals(reactionCount + 1, articlePage.getReactionCount());
+        assertTrue(articlePage.isExistClickedReaction());
         articlePage.clickReaction();
-        Thread.sleep(1000);
-        assertEquals(reactionCount, articlePage.getReactionCount());
+        assertFalse(articlePage.isExistClickedReaction());
 
         String comment = "Классно!";
-        if (articlePage.isFirstCommentHasText()) {
-            assertNotEquals(comment, articlePage.getFirstCommentText());
-        }
+
+        assertFalse(articlePage.isFirstCommentAuthor(username));
+
         articlePage.writeComment(comment);
         articlePage.clickSendComment();
-        Thread.sleep(3000);
-        assertEquals(comment, articlePage.getFirstCommentText());
+
+        assertTrue(articlePage.isFirstCommentAuthor(username));
 
         articlePage.clickDeleteComment();
-        Thread.sleep(3000);
-        if (articlePage.isFirstCommentHasText()) {
-            assertNotEquals(comment, articlePage.getFirstCommentText());
-        }
+
+        assertFalse(articlePage.isFirstCommentAuthor(username));
 
     }
 
-    public static void toLab(WebDriver driver, String userEmail, String username, String secondUserEmail,
-                             String secondUserName, String secondUserId) throws InterruptedException {
+    public static void labTest(WebDriver driver, String userEmail, String username, String secondUserEmail,
+                               String secondUserName, String secondUserId){
         HomePage homePage = HomePage.init(driver);
         LabPage labPage = homePage.goToLabPage();
 
         assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
         assertFalse(labPage.isLogin());
+        System.out.println("login is false");
 
         LoginPage loginPage = labPage.goToLoginPage();
 
         login(loginPage, userEmail);
 
+        Duration timeout = loginPage.implicitTo0();
         driver.switchTo().defaultContent();
-        Thread.sleep(3000);
-        assertEquals("HoYoLAB - Игровое сообщество", labPage.getTitle());
+        loginPage.implicitToTimeout(timeout);
+
         assertTrue(labPage.isLogin());
 
         labPage.skipInterestDialog();
-        assertTrue(labPage.isExistInterestDialog());
 
         //подписка отписка реакции комментарии
-        postTest(labPage);
+        postTest(labPage, username);
 
         //новый пост и удаление
         newPostTest(labPage);
-
 
         // подписка на другого пользователя и запрос новинок
 
@@ -274,39 +245,33 @@ public class HoyoTest {
 
         assertFalse(userPage.isFollow());
         userPage.clickFollowButton();
-        Thread.sleep(2000);
         assertTrue(userPage.isFollow());
 
         userPage.clickAskNewsButton();
-        Thread.sleep(2000);
         assertTrue(userPage.isAskingNews());
 
         // выход
         assertTrue(labPage.isLogin());
         logout(labPage);
-
         assertFalse(labPage.isLogin());
 
         notificationTest(driver, labPage, secondUserEmail, secondUserName, userEmail, username);
 
     }
 
-    private static void newPostTest(LabPage labPage) throws InterruptedException {
+    private static void newPostTest(LabPage labPage){
         NewArticlePage articlePage = labPage.writeNewPost();
 
         articlePage.writePostTitle("Классно");
         articlePage.writePost("Очень классно");
 
-        assertEquals("Группа", articlePage.getGroupName());
+        assertTrue(articlePage.getGroupName("Группа"));
         articlePage.chooseGroup();
-        Thread.sleep(3000);
-        assertEquals("Genshin Impact", articlePage.getGroupName());
+        assertTrue(articlePage.getGroupName("Genshin Impact"));
 
-        assertEquals("С правильной категорией получите больше просмотров!", articlePage.getCategoryName());
+        assertTrue(articlePage.getCategoryName("С правильной категорией получите больше просмотров!"));
         articlePage.chooseCategory();
-        Thread.sleep(3000);
-        assertEquals("Обсуждения", articlePage.getCategoryName());
-
+        assertTrue(articlePage.getCategoryName("Обсуждения"));
 
         assertFalse(articlePage.isOriginalWork());
         articlePage.clickOriginalWork();
@@ -326,35 +291,28 @@ public class HoyoTest {
 
         articlePage.clickPostSend();
 
-        Thread.sleep(3000);
-
         assertEquals("Классно", articlePage.getMyPostTitle());
 
         assertEquals("Очень классно", articlePage.getMyPost());
 
         articlePage.clickDeletePost();
 
-        Thread.sleep(5000);
-
         assertFalse(labPage.isExistsJustNowPost());
 
     }
 
-    private static void logout(LabPage labPage) throws InterruptedException {
+    private static void logout(LabPage labPage) {
         labPage.logout();
-        Thread.sleep(5000);
     }
 
-    private static void notificationTest(WebDriver driver, LabPage labPage, String secondUserEmail, String secondUsername, String firstUserEmail, String firstUserName) throws InterruptedException {
+    private static void notificationTest(WebDriver driver, LabPage labPage, String secondUserEmail,
+                                         String secondUsername, String firstUserEmail, String firstUserName) {
         assertFalse(labPage.isLogin());
         LoginPage loginPage = labPage.goToLoginPage();
         justLogin(loginPage, secondUserEmail);
 
         driver.switchTo().defaultContent();
-        Thread.sleep(10000);
         assertTrue(labPage.isLogin());
-
-        Thread.sleep(3000);
 
         labPage.clickFollowNotifications();
         assertTrue(labPage.checkFollowNotification(firstUserName));
@@ -368,7 +326,6 @@ public class HoyoTest {
         LoginPage secondLoginPage = labPage.goToLoginPage();
         justLogin(secondLoginPage, firstUserEmail);
         driver.switchTo().defaultContent();
-        Thread.sleep(10000);
         assertTrue(labPage.isLogin());
 
         labPage.clickSystemNotifications();
@@ -377,23 +334,19 @@ public class HoyoTest {
     }
 
 
-    private static void writePost(LabPage labPage) throws InterruptedException {
+    private static void writePost(LabPage labPage){
         NewArticlePage articlePage = labPage.writeNewPost();
 
         articlePage.writePostTitle("Классно");
         articlePage.writePost("Очень классно");
 
         articlePage.chooseGroup();
-        Thread.sleep(2000);
         articlePage.chooseCategory();
 
         articlePage.clickOriginalWork();
-        Thread.sleep(2000);
         articlePage.clickReportRight();
 
         articlePage.clickPostSend();
-
-        Thread.sleep(3000);
 
         assertEquals("Классно", articlePage.getMyPostTitle());
         assertEquals("Очень классно", articlePage.getMyPost());

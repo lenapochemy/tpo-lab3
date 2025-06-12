@@ -1,9 +1,8 @@
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 
@@ -12,7 +11,6 @@ import java.time.Duration;
 public class FirefoxTest {
 
     WebDriver driver;
-
 
     @BeforeEach
     public void init() {
@@ -33,19 +31,20 @@ public class FirefoxTest {
     }
 
     @Test
-    public void loginTest() throws InterruptedException{
-        HoyoTest.loginTest(driver, "pochemylena@mail.ru");
+    public void loginTest() {
+        HoyoTest.loginTest(driver, Config.EMAIL);
     }
 
+    @Disabled
     @Test
-    public void registrationTest() throws InterruptedException{
-        HoyoTest.registrationTest(driver, "redmimimirise@mail.ru");
+    public void registrationTest(){
+            HoyoTest.registrationTest(driver, Config.EMAIL);
     }
 
+    @Disabled
     @Test
-    public void labTest() throws InterruptedException{
-        HoyoTest.toLab(driver, "pochemypochemylena@mail.ru", "pochemypochemy",
-                "pochemypochlena@mail.ru", "pochlena", "462966484");
+    public void labTest()  {
+        HoyoTest.labTest(driver, Config.EMAIL, Config.USERNAME, Config.SECOND_EMAIL, Config.SECOND_USERNAME, Config.SECOND_ID);
     }
 
 

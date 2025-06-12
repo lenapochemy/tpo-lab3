@@ -1,17 +1,20 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class NewArticlePage extends Page{
+public class NewArticlePage extends Page {
 
     private final By postTitleInput = By.xpath("//div[@class='mhy-input title-text']//div//input");
     private final By postInput = By.xpath("//div[@class='ql-container ql-snow']//p");
-    private final By groupAndCategorySelectList = By.xpath("//div[contains(@class,'mhy-select mhy-select-outlined')]");
+    private final By groupSelectList = By.xpath("//div[contains(@class,'mhy-select mhy-select-outlined')]");
+    private final By categorySelectList = By.xpath("//div[@class='select-line']/following-sibling::div[contains(@class,'mhy-select mhy-select-outlined')]");
     private final By genshinGroupSelectButton = By.xpath("//div[@title='Genshin Impact' and contains(text(), 'Genshin Impact')]");
-    private final By groupAndCategory = By.xpath("//div[contains(@class,'mhy-select mhy-select-outlined')]//div//span//span[@class='mhy-select__val']//span");
+    private final By group = By.xpath("//div[contains(@class,'mhy-select mhy-select-outlined')]//div//span//span[@class='mhy-select__val']//span");
+    private final By category = By.xpath("//div[@class='select-line']/following-sibling::div[contains(@class,'mhy-select mhy-select-outlined')]//div//span//span[@class='mhy-select__val']//span");
     private final By discussionCategoryButton = By.xpath("//div[@title='Обсуждения']");
     private final By originalWorkOff = By.xpath("//div[@class='copyright-settings-original__original-settings']//div[@class='mhy-switch']");
     private final By originalWorkOn = By.xpath("//div[@class='copyright-settings-original__original-settings']//div[@class='mhy-switch mhy-switch--active']");
@@ -26,7 +29,7 @@ public class NewArticlePage extends Page{
 
     public NewArticlePage(WebDriver driver) {
         super(driver);
-        WebElement element = this.wait.until(
+        this.wait.until(
                 ExpectedConditions.visibilityOfElementLocated(postTitleInput));
 
     }
@@ -43,67 +46,75 @@ public class NewArticlePage extends Page{
         element.sendKeys(post);
     }
 
-    public void chooseGroup(){
-        driver.findElement(groupAndCategorySelectList).click();
+    public void chooseGroup() {
+        driver.findElement(groupSelectList).click();
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(genshinGroupSelectButton));
         element.click();
     }
 
-    public String getGroupName(){
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(groupAndCategory));
-        return element.getText();
+    public boolean getGroupName(String name) {
+        try {
+            customWait(5).until(ExpectedConditions.textToBePresentInElementLocated(group, name));
+        } catch (TimeoutException e) {
+            return false;
+        }
+        return true;
     }
 
-    public void chooseCategory(){
-        driver.findElements(groupAndCategorySelectList).get(1).click();
+    public void chooseCategory() {
+        driver.findElement(categorySelectList).click();
         WebElement element = wait.until(ExpectedConditions.elementToBeClickable(discussionCategoryButton));
         element.click();
     }
 
-    public String getCategoryName(){
-//        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(groupAndCategory));
-        WebElement element = driver.findElements(groupAndCategory).get(1);
-        return element.getText();
+    public boolean getCategoryName(String name) {
+        try {
+            customWait(5).until(ExpectedConditions.textToBePresentInElementLocated(category, name));
+        } catch (TimeoutException e) {
+            return false;
+        }
+        return true;
     }
 
-    public Boolean isOriginalWork(){
-        return driver.findElements(originalWorkOff).isEmpty() && !driver.findElements(originalWorkOn).isEmpty();
+    public Boolean isOriginalWork() {
+        return immediateFindElements(originalWorkOff).isEmpty() && !immediateFindElements(originalWorkOn).isEmpty();
     }
 
-    public Boolean isRepostRight(){
-        return driver.findElements(repostOff).isEmpty() && !driver.findElements(repostOn).isEmpty();
+    public Boolean isRepostRight() {
+        return immediateFindElements(repostOff, 2).isEmpty() && !immediateFindElements(repostOn, 2).isEmpty();
     }
 
-    public void clickOriginalWork(){
-        if(isOriginalWork()){
+    public void clickOriginalWork() {
+        if (isOriginalWork()) {
             driver.findElement(originalWorkOn).click();
-        } else{
+        } else {
             driver.findElement(originalWorkOff).click();
         }
     }
 
-    public void clickReportRight(){
-        if(isRepostRight()){
+    public void clickReportRight() {
+        if (isRepostRight()) {
             driver.findElement(repostOn).click();
-        } else{
+        } else {
             driver.findElement(repostOff).click();
         }
     }
 
-    public void clickPostSend(){
+    public void clickPostSend() {
         driver.findElement(postSendButton).click();
     }
 
 
-    public String getMyPostTitle(){
-        return driver.findElement(myPostTitle).getText();
+    public String getMyPostTitle() {
+        WebElement element = customWait(5).until(ExpectedConditions.visibilityOfElementLocated(myPostTitle));
+        return element.getText();
     }
 
-    public String getMyPost(){
+    public String getMyPost() {
         return driver.findElement(myPost).getText();
     }
 
-    public void clickDeletePost(){
+    public void clickDeletePost() {
         driver.findElement(myPostThreeDots).click();
         driver.findElement(deleteButton).click();
         WebElement confirmElement = this.wait.until(

@@ -7,14 +7,14 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.time.Duration;
 
-public class ChromeTest  {
+public class ChromeTest {
 
     WebDriver driver;
 
     @BeforeEach
     public void init() {
         ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.setImplicitWaitTimeout(Duration.ofSeconds(50));
+        chromeOptions.setImplicitWaitTimeout(Duration.ofSeconds(40));
         driver = new ChromeDriver(chromeOptions);
     }
 
@@ -29,19 +29,18 @@ public class ChromeTest  {
     }
 
     @Test
-    public void loginTest() throws InterruptedException{
-        HoyoTest.loginTest(driver, "pochemylena@mail.ru");
+    public void loginTest() {
+        HoyoTest.loginTest(driver, Config.EMAIL);
     }
 
     @Test
-    public void registrationTest() throws InterruptedException{
-        HoyoTest.registrationTest(driver, "pochpochlena@mail.ru");
+    public void registrationTest() {
+        HoyoTest.registrationTest(driver, Config.EMAIL);
     }
 
     @Test
-    public void labTest() throws InterruptedException{
-        HoyoTest.toLab(driver, "367519@niuitmo.ru", "user_57c90fub0c",
-                "367519@edu.itmo.ru", "red367", "463043807");
+    public void labTest()  {
+        HoyoTest.labTest(driver, Config.EMAIL, Config.USERNAME, Config.SECOND_EMAIL, Config.SECOND_USERNAME, Config.SECOND_ID);
     }
 }
 

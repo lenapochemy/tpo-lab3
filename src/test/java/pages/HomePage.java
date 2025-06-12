@@ -3,11 +3,7 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.nio.file.WatchEvent;
-import java.util.Set;
 
 public class HomePage extends Page {
 
@@ -17,36 +13,35 @@ public class HomePage extends Page {
 
     public HomePage(WebDriver driver) {
         super(driver);
-        WebElement element = this.wait.until(
-                ExpectedConditions.visibilityOfElementLocated(loginButton));
+        this.wait.until(ExpectedConditions.visibilityOfElementLocated(loginButton));
     }
 
-    public static HomePage init(WebDriver driver){
+    public static HomePage init(WebDriver driver) {
         driver.get("https://hsr.hoyoverse.com/ru-ru/home");
         return new HomePage(driver);
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return driver.getTitle();
     }
 
 
-    public LoginPage goToLoginPage(){
+    public LoginPage goToLoginPage() {
         WebElement element = driver.findElement(loginButton);
         element.click();
         return new LoginPage(driver);
     }
 
-    public Boolean isLogin(){
-        return !driver.findElements(accountInfo).isEmpty() && driver.findElements(loginButton).isEmpty();
+    public Boolean isLogin() {
+        return !immediateFindElements(accountInfo, 2).isEmpty() && immediateFindElements(loginButton, 2).isEmpty();
     }
 
 
-    public LabPage goToLabPage(){
+    public LabPage goToLabPage() {
         WebElement element = driver.findElement(hoyolabButton);
         String link = element.getAttribute("href");
-//        driver.get(link);
-        driver.navigate().to(link);
+        driver.get(link);
+//        driver.navigate().to(link);
         return new LabPage(driver);
     }
 }
